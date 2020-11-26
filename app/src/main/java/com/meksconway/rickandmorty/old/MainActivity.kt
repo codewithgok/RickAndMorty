@@ -1,4 +1,4 @@
-package com.meksconway.rickandmorty
+package com.meksconway.rickandmorty.old
 
 import android.os.Bundle
 import android.util.Log
@@ -8,7 +8,9 @@ import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.api.Input
 import com.apollographql.apollo.api.Response
 import com.apollographql.apollo.exception.ApolloException
-import com.meksconway.rickandmorty.Status.*
+import com.meksconway.rickandmorty.CharactersQuery
+import com.meksconway.rickandmorty.R
+import com.meksconway.rickandmorty.common.Status.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,7 +24,7 @@ class MainActivity : AppCompatActivity() {
 
         val charactersQuery = CharactersQuery(page = Input.optional(1))
         NetworkManager.request(charactersQuery) { result ->
-            when(result.status) {
+            when (result.status) {
                 SUCCESS -> {
                     //hide loading
                     //showResults(result.data?.characters?.results)
