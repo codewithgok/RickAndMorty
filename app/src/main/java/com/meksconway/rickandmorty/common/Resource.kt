@@ -1,4 +1,4 @@
-package com.meksconway.rickandmorty
+package com.meksconway.rickandmorty.common
 
 enum class Status {
     SUCCESS,
@@ -8,7 +8,7 @@ enum class Status {
 
 data class Resource<out T>(
     val status: Status,
-    val data: T? = null,
+    val data: T? = null,//* no-op */
     val errorMessage: String? = null
 ) {
 
@@ -19,12 +19,10 @@ data class Resource<out T>(
         }
 
         fun <T> fail(message: String?): Resource<T> {
-            return Resource(Status.FAIL, errorMessage = message)
+            return Resource(status = Status.FAIL, errorMessage = message)
         }
 
         fun <T> loading(): Resource<T> = Resource(Status.LOADING)
 
     }
-
-
 }

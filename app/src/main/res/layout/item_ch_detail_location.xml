@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="10dp"
+    >
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnLocation"
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/white"
+        android:fontFamily="@font/montserrat_medium"
+        android:text="C34-World"
+        app:rippleColor="@color/purpleLight"
+        android:textSize="14sp"
+        android:textAllCaps="false"
+        android:gravity="start|center_vertical"
+        android:textColor="@color/purple"
+        app:strokeColor="@color/purple"
+        app:strokeWidth="1dp" />
+
+</FrameLayout>

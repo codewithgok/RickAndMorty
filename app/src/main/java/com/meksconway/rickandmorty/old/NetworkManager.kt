@@ -1,4 +1,4 @@
-package com.meksconway.rickandmorty
+package com.meksconway.rickandmorty.old
 
 import com.apollographql.apollo.ApolloCall
 import com.apollographql.apollo.ApolloClient
@@ -7,6 +7,7 @@ import com.apollographql.apollo.api.Operation
 import com.apollographql.apollo.api.Query
 import com.apollographql.apollo.api.Response
 import com.apollographql.apollo.exception.ApolloException
+import com.meksconway.rickandmorty.common.Resource
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 
