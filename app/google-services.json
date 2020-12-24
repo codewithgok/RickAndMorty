@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "517291322528",
+    "project_id": "rick-and-morty-24f5b",
+    "storage_bucket": "rick-and-morty-24f5b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:517291322528:android:e342672352668f49d16dc5",
+        "android_client_info": {
+          "package_name": "com.meksconway.rickandmorty"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "517291322528-qtmgpmlg7l29fedmc835p5gfmjo3cgl1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAdTrDTth5CPDkc0oAHTQ4Dm6UnPyVUIRQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "517291322528-qtmgpmlg7l29fedmc835p5gfmjo3cgl1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

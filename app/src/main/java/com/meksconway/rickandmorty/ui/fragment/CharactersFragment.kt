@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.widget.Toast
 import androidx.core.view.isVisible
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
@@ -18,6 +19,8 @@ import com.meksconway.rickandmorty.databinding.FragmentCharactersBinding
 import com.meksconway.rickandmorty.ui.adapter.CharactersAdapter
 import com.meksconway.rickandmorty.ui.adapter.LoadMoreStateAdapter
 import com.meksconway.rickandmorty.viewmodel.CharactersVM
+import com.meksconway.rickandmorty.viewmodel.SearchType
+import com.meksconway.rickandmorty.viewmodel.SearchVM
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -30,6 +33,7 @@ class CharactersFragment : BaseFragment<CharactersVM>(R.layout.fragment_characte
     override val pageStatus = PageNavStatus.rootFragmentStatus(
         "Characters"
     )
+    private val searchVM by activityViewModels<SearchVM>()
 
     private val chAdapter = CharactersAdapter {
         it?.id ?: return@CharactersAdapter
@@ -38,6 +42,7 @@ class CharactersFragment : BaseFragment<CharactersVM>(R.layout.fragment_characte
             it.id, it.name
         )
     }
+    private var isFilterMode = false
 
 
     override fun viewDidLoad(savedInstanceState: Bundle?) {
@@ -53,7 +58,7 @@ class CharactersFragment : BaseFragment<CharactersVM>(R.layout.fragment_characte
             if (loadState.refresh is LoadState.Loading) {
                 lifecycleScope.launchWhenResumed {
                     if (!binding.refreshLayout.isRefreshing) {
-                        binding.progressBar.isVisible = true
+                        binding.progressBar.isVisible = !isFilterMode
                     }
                 }
 
@@ -137,9 +142,17 @@ class CharactersFragment : BaseFragment<CharactersVM>(R.layout.fragment_characte
                 chAdapter.submitData(it)
             }
 
-
         }
 
+        searchVM.searchEvent.observe(viewLifecycleOwner) {
+            if (it.type == SearchType.CHARACTER) {
+                this.isFilterMode = it.searchText != null
+                it.searchText?.let { st ->
+                    viewModel.setFilterSearch(st)
+                    chAdapter.refresh()
+                }
+            }
+        }
 
     }
 

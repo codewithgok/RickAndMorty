@@ -5,17 +5,22 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.meksconway.rickandmorty.LocationsQuery
+import com.meksconway.rickandmorty.common.RMNavigator
 import com.meksconway.rickandmorty.common.viewBinding
 import com.meksconway.rickandmorty.databinding.ItemLocationsBinding
 
-class LocationsAdapter(val callback: (LocationsQuery.Result?) -> Unit) :
+class LocationsAdapter :
     PagingDataAdapter<LocationsQuery.Result,
             LocationsVH>(LocationsDiffUtil()) {
 
     override fun onBindViewHolder(holder: LocationsVH, position: Int) {
         holder.bind(getItem(position))
         holder.binding.root.setOnClickListener {
-            callback(getItem(position))
+            val model = getItem(position)
+            RMNavigator.navigateToLocationDetailFragment(
+                model?.id,
+                model?.name
+            )
         }
     }
 

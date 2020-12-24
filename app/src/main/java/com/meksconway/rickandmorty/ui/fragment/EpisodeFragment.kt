@@ -30,6 +30,7 @@ class EpisodeFragment : BaseFragment<EpisodeVM>(R.layout.fragment_episode) {
     )
 
     private val episodeAdapter = EpisodesAdapter()
+    private var isFilterMode = false
 
     override fun viewDidLoad(savedInstanceState: Bundle?) {
         super.viewDidLoad(savedInstanceState)

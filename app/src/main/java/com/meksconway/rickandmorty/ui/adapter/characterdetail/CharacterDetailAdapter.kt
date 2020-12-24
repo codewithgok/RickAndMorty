@@ -8,7 +8,6 @@ import com.meksconway.rickandmorty.common.viewBinding
 import com.meksconway.rickandmorty.data.repository.CharacterDetailItem
 import com.meksconway.rickandmorty.data.repository.CharacterDetailItem.*
 import com.meksconway.rickandmorty.databinding.*
-import com.meksconway.rickandmorty.ui.adapter.EpisodesVH
 
 class CharacterDetailAdapter :
     ListAdapter<CharacterDetailItem, RecyclerView.ViewHolder>(CharacterDetailDiffUtil()) {

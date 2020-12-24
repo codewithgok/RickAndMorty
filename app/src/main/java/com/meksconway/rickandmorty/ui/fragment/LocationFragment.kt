@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
@@ -11,12 +12,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.meksconway.rickandmorty.R
 import com.meksconway.rickandmorty.base.BaseFragment
 import com.meksconway.rickandmorty.common.PageNavStatus
-import com.meksconway.rickandmorty.common.RMNavigator
 import com.meksconway.rickandmorty.common.viewBinding
 import com.meksconway.rickandmorty.databinding.FragmentLocationBinding
 import com.meksconway.rickandmorty.ui.adapter.LoadMoreStateAdapter
 import com.meksconway.rickandmorty.ui.adapter.LocationsAdapter
 import com.meksconway.rickandmorty.viewmodel.LocationVM
+import com.meksconway.rickandmorty.viewmodel.SearchType
+import com.meksconway.rickandmorty.viewmodel.SearchVM
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -29,12 +31,10 @@ class LocationFragment : BaseFragment<LocationVM>(R.layout.fragment_location) {
     override val pageStatus = PageNavStatus.rootFragmentStatus(
         "Locations"
     )
+    private val searchVM: SearchVM by activityViewModels()
+    private var isFilterMode = false
 
-    private val locationAdapter = LocationsAdapter { loc ->
-        RMNavigator.navigateToLocationDetailFragment(
-            loc?.id, loc?.name
-        )
-    }
+    private val locationAdapter = LocationsAdapter()
 
     override fun viewDidLoad(savedInstanceState: Bundle?) {
         super.viewDidLoad(savedInstanceState)
@@ -49,7 +49,7 @@ class LocationFragment : BaseFragment<LocationVM>(R.layout.fragment_location) {
             locationAdapter.addLoadStateListener { loadState ->
                 if (loadState.refresh is LoadState.Loading) {
                     lifecycleScope.launchWhenResumed {
-                        binding.progressBar.isVisible = true
+                        binding.progressBar.isVisible = !isFilterMode
                     }
 
                 } else {
@@ -81,6 +81,13 @@ class LocationFragment : BaseFragment<LocationVM>(R.layout.fragment_location) {
         lifecycleScope.launch {
             viewModel.locationsData.collectLatest {
                 locationAdapter.submitData(it)
+            }
+        }
+
+        searchVM.searchEvent.observe(viewLifecycleOwner) {
+            if (it.type == SearchType.LOCATION) {
+                viewModel.setFilter(it.searchText)
+                locationAdapter.refresh()
             }
         }
 
