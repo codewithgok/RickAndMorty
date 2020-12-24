@@ -84,7 +84,6 @@ class CharacterDetailFragment :
             Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
             delay(500)
             RMNavigator.popBack()
-            activity?.onBackPressed()
         }
 
     }

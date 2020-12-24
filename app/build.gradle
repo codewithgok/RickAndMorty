@@ -4,6 +4,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.apollographql.apollo'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'dagger.hilt.android.plugin'
+apply plugin: 'com.google.gms.google-services'
 
 
 android {
@@ -122,5 +123,8 @@ dependencies {
     //interceptor
     implementation("com.squareup.okhttp3:logging-interceptor:4.8.0")
     implementation "org.jetbrains.kotlin:kotlin-reflect:1.4.10"
+    implementation platform('com.google.firebase:firebase-bom:26.2.0')
+    implementation 'com.google.firebase:firebase-messaging-ktx'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
 
 }

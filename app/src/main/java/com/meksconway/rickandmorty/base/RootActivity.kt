@@ -1,37 +1,38 @@
 package com.meksconway.rickandmorty.base
 
 import android.os.Bundle
+import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import com.meksconway.rickandmorty.R
-import com.meksconway.rickandmorty.common.BottomTabs.Characters
+import com.meksconway.rickandmorty.common.BottomTabs.*
 import com.meksconway.rickandmorty.common.RMNavigator
-import com.meksconway.rickandmorty.common.hideKeyboard
-import com.meksconway.rickandmorty.common.showKeyboard
 import com.meksconway.rickandmorty.common.viewBinding
 import com.meksconway.rickandmorty.databinding.ActivityRootBinding
 import com.meksconway.rickandmorty.ui.fragment.CharactersFragment
 import com.meksconway.rickandmorty.ui.fragment.EpisodeFragment
 import com.meksconway.rickandmorty.ui.fragment.LocationFragment
+import com.meksconway.rickandmorty.ui.view.RMNavBar
 import com.meksconway.rickandmorty.viewmodel.RootVM
+import com.meksconway.rickandmorty.viewmodel.SearchEventModel
+import com.meksconway.rickandmorty.viewmodel.SearchType
+import com.meksconway.rickandmorty.viewmodel.SearchVM
 import com.trendyol.medusalib.navigator.MultipleStackNavigator
 import com.trendyol.medusalib.navigator.Navigator
 import com.trendyol.medusalib.navigator.NavigatorConfiguration
 import com.trendyol.medusalib.navigator.transaction.NavigatorTransaction
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
-import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEvent
-import net.yslibrary.android.keyboardvisibilityevent.KeyboardVisibilityEventListener
 
 @AndroidEntryPoint
-class RootActivity : AppCompatActivity(), Navigator.NavigatorListener {
+class RootActivity : AppCompatActivity(), Navigator.NavigatorListener,
+    RMNavBar.SearchBarFocusListener {
 
     private val viewModel by viewModels<RootVM>()
     private val binding by viewBinding(ActivityRootBinding::inflate)
+    private val searchVM by viewModels<SearchVM>()
 
     private val rootFragmentProvider: List<() -> Fragment> =
         listOf(
@@ -60,34 +61,8 @@ class RootActivity : AppCompatActivity(), Navigator.NavigatorListener {
         setContentView(binding.root)
         navigator.initialize(savedInstanceState)
         RMNavigator.register(navigator)
+        binding.rmNavBar.initFocusListener(this)
         observeViewModel()
-
-        KeyboardVisibilityEvent.setEventListener(this, object : KeyboardVisibilityEventListener {
-            override fun onVisibilityChanged(isOpen: Boolean) {
-                binding.bottomNav.isGone = isOpen
-            }
-        })
-
-        binding.btnBack.setOnClickListener {
-            if (navigator.canGoBack()) {
-                navigator.goBack()
-            }
-        }
-
-        binding.btnSearch.setOnClickListener {
-            lifecycleScope.launchWhenResumed {
-                binding.lytSearch.isVisible = true
-                delay(300)
-                showKeyboard(binding.edtSearch)
-            }
-        }
-
-        binding.btnCloseSearch.setOnClickListener {
-            lifecycleScope.launchWhenResumed {
-                binding.lytSearch.isVisible = false
-                hideKeyboard(binding.root)
-            }
-        }
 
         binding.bottomNav.onItemSelected = { navigator.switchTab(it) }
 
@@ -99,6 +74,22 @@ class RootActivity : AppCompatActivity(), Navigator.NavigatorListener {
             }
         }
 
+        binding.rmNavBar.setSearchListener(
+            RMNavBar.DebouncingQueryTextListener(lifecycle) {
+                when (binding.bottomNav.itemActiveIndex) {
+                    Characters.ordinal -> {
+                        searchVM.setSearchText(SearchEventModel(it, SearchType.CHARACTER))
+                    }
+                    Locations.ordinal -> {
+                        searchVM.setSearchText(SearchEventModel(it, SearchType.LOCATION))
+                    }
+                    Episodes.ordinal -> {
+                        searchVM.setSearchText(SearchEventModel(it, SearchType.EPISODE))
+                    }
+                }
+            }
+        )
+
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -108,28 +99,31 @@ class RootActivity : AppCompatActivity(), Navigator.NavigatorListener {
 
 
     override fun onBackPressed() {
-
-        if (binding.lytSearch.isVisible) {
-            binding.lytSearch.isVisible = false
-            return
-        }
-
-        if (navigator.canGoBack()) {
-            navigator.goBack()
-        } else {
-            super.onBackPressed()
-        }
+        RMNavigator.popBack { super.onBackPressed() }
     }
 
     private fun observeViewModel() {
         viewModel.getPageStatus().observe(this) {
-            binding.btnBack.isVisible = it.isBackVisible
-            binding.btnSearch.isVisible = it.isFilterBtnVisible
-            binding.txtTitle.text = it.title
+            binding.fab.isVisible = it.isFilterBtnVisible
+            binding.rmNavBar.setConfig(it.title, it.isBackVisible, it.isFilterBtnVisible)
         }
     }
 
     override fun onTabChanged(tabIndex: Int) {
         binding.bottomNav.itemActiveIndex = tabIndex
+    }
+
+
+    //RMNavBar.SearchBarFocusListener
+    override fun onPrepare() {
+        binding.bottomNav.isGone = true
+    }
+
+    override fun onFocused(view: View) {
+
+    }
+
+    override fun onClearFocus() {
+        binding.bottomNav.isGone = false
     }
 }

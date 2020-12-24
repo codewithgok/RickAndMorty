@@ -10,6 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.onStart
 
 inline fun <reified T : Any> T.ordinal(): Int {
     if (T::class.isSealed) {
@@ -43,6 +44,14 @@ fun <T> resultFlow(networkCall: suspend () -> Resource<T>): Flow<Resource<T>> {
     }.flowOn(Dispatchers.IO)
 }
 
+fun MultipleStackNavigator.safeBackWithCompletion(completion: () -> Unit) {
+    if (this.canGoBack()) {
+        this.goBack()
+    } else {
+        completion.invoke()
+    }
+}
+
 fun MultipleStackNavigator.safeBack() {
     if (this.canGoBack()) {
         this.goBack()
@@ -72,12 +81,3 @@ fun Context.showKeyboard(view: View) {
         getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
     inputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0)
 }
-
-/**
- *
- * public static void showKeyboard(EditText mEtSearch, Context context) {
-mEtSearch.requestFocus();
-InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
-imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-}
- * */

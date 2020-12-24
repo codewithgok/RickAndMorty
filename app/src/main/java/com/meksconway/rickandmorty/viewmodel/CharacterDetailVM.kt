@@ -12,7 +12,6 @@ import com.meksconway.rickandmorty.data.repository.CharacterDetailItem
 import com.meksconway.rickandmorty.data.repository.CharacterRepository
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-
 class CharacterDetailVM
 @ViewModelInject constructor(
     private val repository: CharacterRepository,
